@@ -65,7 +65,9 @@ public class ImageCrawlerRunner {
 			// Processing the list of links
 			while( linkList.size() > 0 ) {
 					
-				System.out.format("[%6d/%6d] - ", linkList.size(), visitedUrlList.size());
+				//System.out.format("[%6d/%6d] - ", linkList.size(), visitedUrlList.size());
+				System.out.print("["+((visitedUrlList.size()==0)?0:(int)((float)visitedUrlList.size()/(float)(linkList.size()+visitedUrlList.size())*100.0))+"%] [Total page urls found: "+(linkList.size()+visitedUrlList.size())+"] - ");
+				
 				
 				// Getting the first element from the list..
 				String currentUrl = linkList.get(0);
@@ -204,7 +206,7 @@ public class ImageCrawlerRunner {
 			webClient.closeAllWindows();
 			
 			System.out.println("Total images found: "+imageCrawler.imageUrlRepo.size());
-			//imageCrawler.downloadImages();
+			imageCrawler.downloadImages();
 			
 		}
 	}
