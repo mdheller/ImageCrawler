@@ -43,7 +43,7 @@ public class ImageCrawlerRunner {
 	
 			System.out.println("Select a board to download. Use one of the followings as parameter:");
 			for (int i=linkList.size()-1; i>0; i--) {
-				//TODO: make the selection easyer?, by presenting only the board names like /b/ or /mlp/ as a choice. 
+				//TODO: make the selection easier?, by presenting only the board names like /b/ or /mlp/ as a choice. 
 				System.out.println("\t"+linkList.get(i));
 				if (!linkList.get(i).equals(selectedBoardURL)) {
 					linkList.remove(i);
@@ -65,9 +65,7 @@ public class ImageCrawlerRunner {
 			// Processing the list of links
 			while( linkList.size() > 0 ) {
 					
-				//System.out.format("[%6d/%6d] - ", linkList.size(), visitedUrlList.size());
 				System.out.print("["+((visitedUrlList.size()==0)?0:(int)((float)visitedUrlList.size()/(float)(linkList.size()+visitedUrlList.size())*100.0))+"%] [Total page urls found: "+(linkList.size()+visitedUrlList.size())+"] - ");
-				
 				
 				// Getting the first element from the list..
 				String currentUrl = linkList.get(0);
@@ -89,13 +87,10 @@ public class ImageCrawlerRunner {
 					continue;
 				}
 				
-				//System.out.println(page.asXml());
-		
 				// Board title:
 				// Pattern: <div class="boardTitle">/k/ - Weapons</div>
 				HtmlElement boardTitleHtmlElement = (HtmlElement) page.getByXPath("//div[@class='boardTitle']").get(0);
 				String boardTitle = boardTitleHtmlElement.getTextContent();
-				//System.out.println("Board Title: " + boardTitle);
 				
 				if (!currentUrl.contains(selectedBoardURL)) {
 					if (!visitedUrlList.contains(linkList.get(0))) {
@@ -109,13 +104,13 @@ public class ImageCrawlerRunner {
 				List<HtmlAnchor> imageLinksOnPage = imageCrawler.getImgAnchors(page);
 				
 				// Creating a folder
+				// TODO: creating all these folders are not necessary
 				String boardPath = IMAGE_REPO+boardTitle.replace("/", "");
 				if (!Files.exists(Paths.get(boardPath))) {
 					Files.createDirectories(Paths.get(boardPath));			
 				}
 				
 				// Downloading an image by an anchor
-				//System.out.println("Will download " + linksOnPage.size() + " images. " + boardPath);
 				for (int k=0; k<imageLinksOnPage.size(); k++) {
 					//System.out.println("Should download: " + linksOnPage.get(k).getAttribute("href"));
 					//imageCrawler.downloadImage(linksOnPage.get(k), boardPath);
@@ -146,16 +141,13 @@ public class ImageCrawlerRunner {
 					}  else {		
 						if (!currentUrl.contains("thread") && currentUrl.matches("^.+?\\d$") && link.matches("^[0-9]*$")) {
 							newListWithCurrentUrl.add(0, currentUrl.substring(
-										0, (currentUrl.lastIndexOf("/")))  + "/" + newList.get(i) 
-									);			
+								0, (currentUrl.lastIndexOf("/")))  + "/" + newList.get(i) 
+							);			
 						} else {
 							// http://boards.4chan.org/vr/6/thread/2219995      - link: thread/2220510
 							if (currentUrl.contains("thread") && link.startsWith("thread/")) {
-								
 								newListWithCurrentUrl.add(0, currentUrl.substring(0, currentUrl.lastIndexOf("/thread/")) + "/" + link);
-								
 							} else if (currentUrl.contains("thread") && currentUrl.matches("^.+?\\d$") && link.matches("^[0-9]*$")) {
-								
 								// currentUrl:
 								// http://boards.4chan.org/mlp/2/thread/21717688
 								// link:
@@ -164,21 +156,17 @@ public class ImageCrawlerRunner {
 								// http://boards.4chan.org/mlp/2/thread/21729978
 								//TODO: put all this kind of regex magic to a method
 								Matcher m = Pattern.compile("(.*)/[0-9]*/thread/(.*)").matcher(currentUrl);
-								
 								String endOfUrl = null;
 								if(m.matches())
 								{
 									endOfUrl = m.group(1);
 								}
-								// endOfUrl = http://boards.4chan.org/mlp
-								
 								if (endOfUrl == null) {
 									System.out.println("Bad regex pattern - Fix me!: " + currentUrl + " " + link);
 									throw new Exception("Bad regex pattern - Fix me!: " + currentUrl + " " + link);
 								}
-								
 								newListWithCurrentUrl.add(0, endOfUrl + "/" + link);
-		
+
 							} else {
 								if (currentUrl.endsWith("/")) {
 									newListWithCurrentUrl.add(0, currentUrl+newList.get(i));

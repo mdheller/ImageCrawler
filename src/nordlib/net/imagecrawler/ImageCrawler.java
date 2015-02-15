@@ -21,6 +21,7 @@ public class ImageCrawler {
 	public final WebClient webClient;
 	public static List<String> boardTitles;
 	public List<ImageItem> imageUrlRepo;
+	public final static int THREAD_IMAGE_CAPACITY = 500;
 	
 	@SuppressWarnings("deprecation")
 	public ImageCrawler() {
@@ -161,8 +162,8 @@ public class ImageCrawler {
 	@SuppressWarnings("unused")
 	public void downloadImages() {
 				
-		if (this.imageUrlRepo.size() <= 500) {
-			System.out.println("less than 500 elements found");
+		if (this.imageUrlRepo.size() <= THREAD_IMAGE_CAPACITY) {
+			System.out.println("less than "+THREAD_IMAGE_CAPACITY+" elements found");
 			
 
 			ImageSaver imageSaver = new ImageSaver(0, this.imageUrlRepo);
@@ -170,13 +171,13 @@ public class ImageCrawler {
 				
 			
 		} else {
-			System.out.println("more than 500 elements found");
+			System.out.println("more than "+THREAD_IMAGE_CAPACITY+" elements found");
 			
 			ArrayList<ArrayList<ImageItem>> imageUrlRepoList = new ArrayList<ArrayList<ImageItem>>();
 			imageUrlRepoList.add(new ArrayList<ImageItem>());
 			int s = this.imageUrlRepo.size();
 			for (int i=0; i<this.imageUrlRepo.size()-1; i++) {
-				if (i%500==0 && i>0) {
+				if (i%THREAD_IMAGE_CAPACITY==0 && i>0) {
 					imageUrlRepoList.add(new ArrayList<ImageItem>());
 				}
 			
